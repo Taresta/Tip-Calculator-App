@@ -1,0 +1,94 @@
+//Colors
+$strong-cyan: hsl(172, 67%, 45%);
+$very-dark-cyan: hsl(183, 100%, 15%);
+$dark-grayish-cyan: hsl(186, 14%, 43%);
+$grayish-cyan: hsl(184, 14%, 56%);
+$light-grayish-cyan: hsl(185, 41%, 84%);
+$very-light-grayish-cyan: hsl(189, 41%, 97%);
+$white: hsl(0, 0%, 100%);
+
+//Typography
+$primary-font-size: 24px;
+$secondary-font-size:16px;
+
+$font-family: "Space Mono", serif;
+
+$primary-font-weight:700;
+$secondary-font-weight:400;
+
+//Common styles
+$padding-for-buttons: 0.5em;
+*, 
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+}
+
+@mixin input-background($background-image: none) {
+    background-image: $background-image;
+}
+//Let us make body a grid, with a single column and row which are centered
+body {
+    display:grid;
+    // place-content: center; //Let us apply it later
+    min-height: 100vh;
+    background-color: $light-grayish-cyan;
+    font-family: $font-family;
+    // font-size: $primary-font-size;
+    // font-weight: $primary-font-weight;
+}
+header {
+    text-align: center;
+}
+.bill-card {
+    display:grid; //This will not do anything now, but for desktop we will make two columns
+    gap:0.5rem;
+    background-color: $white;
+    padding: 1rem;
+    border-radius:10px;
+}
+input {
+    text-align: right;
+    background-repeat: no-repeat;
+    &#bill {
+       @include input-background($background-image: url(../images/icon-dollar.svg));
+    }
+    &#number-of-people {
+        @include input-background($background-image: url(../images/icon-person.svg));
+    }
+}
+
+.bill-card__form {
+    display:flex;
+    flex-direction: column;
+    .bill-card__tip-buttons {
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:0.5em;
+        .bill-card__tip-button {
+            padding:$padding-for-buttons;
+            background-color: $very-dark-cyan;
+            border: none;
+            cursor: pointer;
+            &.bill-card__tip-button--active {
+                background-color: $strong-cyan;
+            }
+        }
+    }
+}
+
+.bill-card__result {
+    background-color: $very-dark-cyan;
+    padding: 1rem;
+    .bill-card__section {
+        display: flex;
+        justify-content: space-between;
+    }
+    .bill-card__reset-button {
+       width: 100%;
+       text-align: center;
+       padding: $padding-for-buttons;
+    }
+}
