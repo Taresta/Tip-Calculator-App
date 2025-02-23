@@ -6,7 +6,7 @@ $grayish-cyan: hsl(184, 14%, 56%);
 $light-grayish-cyan: hsl(185, 41%, 84%);
 $very-light-grayish-cyan: hsl(189, 41%, 97%);
 $white: hsl(0, 0%, 100%);
-
+$tomato: hsl(4, 100%, 67%);
 //Typography
 $primary-font-size: 24px;
 $secondary-font-size:16px;
@@ -29,7 +29,6 @@ $padding-for-buttons: 0.5em;
 
 @mixin input-background($background-image: none) {
     background-image: $background-image;
-    background-color: $very-light-grayish-cyan;
     background-repeat: no-repeat;
     background-position: 10px center;
     background-size: 0.5rem;
@@ -48,7 +47,8 @@ $padding-for-buttons: 0.5em;
 //Let us make body a grid, with a single column and row which are centered
 body {
     display:grid;
-    // place-content: center; //Let us apply it later
+    place-content: center; //Let us apply it later
+    gap:clamp(1rem, 1rem + 1.5vw, 2rem);
     min-height: 100vh;
     background-color: $light-grayish-cyan;
     font-family: $font-family;
@@ -63,8 +63,9 @@ input {
     @include font();
     padding:0.5rem;
     text-align: right;
-    border:none;
-    border-radius:10px;
+    border: none;
+    border-radius:5px;
+    background-color: $very-light-grayish-cyan;
     color: $very-dark-cyan;
     &#bill {
        @include input-background($background-image: url(../images/icon-dollar.svg));
@@ -72,13 +73,19 @@ input {
     &#number-of-people {
         @include input-background($background-image: url(../images/icon-person.svg));
     }
+    &:focus, &:visited {
+      outline: 1.5px solid $strong-cyan; //Here we have used outline to over-ride the browser's default outline instead of border
+    }
+    &.bill-card__input--error {
+      outline: 1.5px solid $tomato;
+    }
 }
 
 .bill-card {
   display:grid; //This will not do anything now, but for desktop we will make two columns
-  gap:0.5rem;
+  gap:clamp(1rem, 1rem + 1.5vw, 2rem);
   background-color: $white;
-  padding: 1rem;
+  padding: clamp(1rem, 1rem + 1.5vw, 2rem);
   border-radius:10px;
 }
 .bill-card__form {
@@ -92,12 +99,21 @@ input {
       font-size: $tertiary-font-size;
       color:$dark-grayish-cyan;
     }
-    .bill-card__tip-buttons {
+    .bill-card__error {
+      display: none;
+      align-self: flex-end;
+      color : $tomato;
+      font-size: $tertiary-font-size;
+      &.bill-card__error--active {
+        display: block;
+      }
+    }
+    .bill-card__tip-percentages {
         display:grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:repeat(2, minmax(0, 1fr)); //This creates columns of equal width contre 1fr 1fr which just distributes equal extra space between columns
         gap:0.5em;
 
-        .bill-card__tip-button {
+        .bill-card__tip-percentage {
             @include font();
             padding:$padding-for-buttons;
             background-color: $very-dark-cyan;
@@ -111,6 +127,9 @@ input {
             }
             &.bill-card__tip-button--active {
                 background-color: $strong-cyan;
+            }
+            .bill-card__input--custom {
+              
             }
         }
     }
@@ -140,12 +159,48 @@ input {
         }
     }
     .bill-card__reset-button {
+      @include font();
        width: 100%;
+       margin-top: auto;
        text-align: center;
        padding: $padding-for-buttons;
-      //  background-color: $dark-grayish-cyan;
-      //  color:$very-dark-cyan;
        border:none;
        border-radius: 5px;
+       background-color: $strong-cyan;
+       color:$very-dark-cyan;
+       cursor: pointer;
+       &:disabled {
+        background-color: hsl(174, 42%, 30%);
+        cursor: not-allowed;
+       }
+       
     }
 }
+
+@media (min-width:767px) {
+
+  .bill-card {
+    width: clamp(38rem, 38rem + 10vw, 40rem);
+    grid-template-columns: 1fr 1fr;
+  }
+  .bill-card__form {
+    .bill-card__tip-buttons {
+      grid-template-columns: repeat(3, minmax(0, 1fr));;
+    }
+  }
+}
+
+
+
+
+/*
+
+Observartion number 1, I had not done place-content center for body, it was commented
+So, the main element was stretching as the width was increasing, I though let us add media query for 425px, but when I un-commented the property
+place-content center, the main element stopped growing by itself after certain width. This is cool. I do not need media queries.
+ @media (min-width: 424px) {
+   .bill-card {
+     // width:80%;
+   }
+ }
+*/
