@@ -143,6 +143,14 @@ input.bill-card__input--error {
   cursor: not-allowed;
 }
 
+.attribution {
+  font-size: 11px;
+  text-align: center;
+}
+.attribution a {
+  color: hsl(228, 45%, 44%);
+}
+
 @media (min-width: 767px) {
   .bill-card {
     width: clamp(38rem, 38rem + 10vw, 40rem);
