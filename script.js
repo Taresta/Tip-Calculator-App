@@ -1,11 +1,38 @@
-// The journey of a thousand miles starts with a single step //
+//____________________________________________________________
+// The journey of thousand miles start with a single step
+//____________________________________________________________
 
-// VALIDATION FUNCTIONS
+
+//____________________________________________________________
+// VALIDATIONS
+//____________________________________________________________
+
 const validations = {
     bill: (bill) => isNumber(bill, 'bill') && isGreaterThanZero(bill, 'bill'),
     people: (people) => isNumber(people, 'people') && isInteger(people, 'people') && isGreaterThanZero(people, 'people'),
     tip: (tip) => isNumber(tip, 'tip') && tip >= 0
 };
+
+function isNumber(value, type) {
+    return !isNaN(value);
+}
+
+function isInteger(value, type) {
+    return Number.isInteger(value);
+}
+
+function isGreaterThanZero(value, type) {
+    return value > 0;
+}
+
+function dataIsValid(key, value, validations) {
+    if (!validations[key]) return true;
+    return validations[key](value);
+}
+
+//____________________________________________________________
+// ERROR STATE MANAGEMENT
+//____________________________________________________________
 
 const errorState = {
     bill: (value) => {
@@ -38,33 +65,11 @@ const errorFreeState = {
         customTip.classList.remove('bill-card__input--error');
     }
 }
-function isNumber(value, type) {
-    //set error state
-    // errorState[type] = !isNaN(value)? '': `Can't be a non-number value`;
-    return !isNaN(value);
-}
-function isInteger(value, type) {
-    //set error state
-    // errorState[type] = Number.isInteger(value)? '': `Can't be fraction`;
-    return Number.isInteger(value);
-}
-function isGreaterThanZero(value, type) {
-    //set error state
-    // errorState[type] = (value > 0)? '': `Can not be ${value}`;
-    return value > 0;
-}
-function dataIsValid(key, value, validations) {
-    if (!validations[key]) return true;
-    return validations[key](value);
 
-    //Find the specific reason for the error
-}
-
-//APPEARANCE FUNCTIONS
-
-
-
+//____________________________________________________________
 // SPLIT BILL CLASS
+//____________________________________________________________
+
 class SplitBill {
     constructor(bill, tip, people) {
         this._bill = bill;
@@ -97,7 +102,11 @@ class SplitBill {
 const splitBill = new SplitBill();
 console.log(splitBill);
 
-// DOM ELEMENT SELECTION
+
+//____________________________________________________________
+// DOM ELEMENT SELECTION & INITIAL SETUP
+//____________________________________________________________
+
 const billField = document.getElementById('bill');
 const tipField = document.querySelectorAll('.bill-card__tip-percentage');
 const customTip = document.querySelector('.bill-card__input-custom');
@@ -108,17 +117,19 @@ const totalPerPerson = document.querySelector('.bill-card__total-amount--total')
 const billError = document.getElementById('bill-error');
 const peopleError = document.getElementById('number-of-people-error');
 
-// INITIAL SETUP
 resetButton.disabled = true;
 resetButton.addEventListener('click', restoreTodefault);
 
+//____________________________________________________________
 // EVENT LISTENERS
+//____________________________________________________________
+
 billField.addEventListener('input', (e) => {
-    handleInput(e, 'bill');
+    handleInput(e, 'bill', validations);
 });
 
 peopleField.addEventListener('input', (e) => {
-    handleInput(e, 'people');
+    handleInput(e, 'people', validations);
 });
 
 tipField.forEach(button => {
@@ -129,14 +140,18 @@ customTip.addEventListener('input', (e) => {
     handleTip(e);
 });
 
-// EVENT HANDLERS
 
-function handleInput(event, input) {
+//____________________________________________________________
+// EVENT HANDLERS
+//____________________________________________________________
+
+function handleInput(event, input, validations) {
     //check data is valid or no
     const isValid = dataIsValid(input, Number(event.target.value), validations);
    
     if (isValid) {
-        splitBill[input] = event.target.value;
+        //set the inout value
+        splitBill['set' + input[0].toUpperCase() + input.slice(1)](event.target.value); //This should create setBill() or setPeople()
         setResult();
         clearError(input);
     }
@@ -144,21 +159,15 @@ function handleInput(event, input) {
         showError(input, event.target.value);
     }
 }
-function clearError(input) {
-    errorFreeState[input]();
-}
-function showError(input, value) {
-    //set the error state
-    errorState[input](value);
-}
+
 function handleClick(e) {
     removeActiveFromButtons(); 
     clearCustomTip();
     e.target.classList.add('bill-card__tip-button--active');
-    handleTip(e);
+    handleTip(e, validations);
 }
 
-function handleTip(e) {
+function handleTip(e, validations) {
     let tip = e.target.textContent || e.target.value;
     const isValid = dataIsValid('tip', parseFloat(tip), validations);
     if (isValid) {
@@ -172,16 +181,36 @@ function handleTip(e) {
     
 }
 
+//____________________________________________________________
+// ERROR MANAGEMENT
+//____________________________________________________________
+
+function clearError(input) {
+    errorFreeState[input]();
+}
+function showError(input, value) {
+    //set the error state
+    errorState[input](value);
+}
+
+//____________________________________________________________
+// UI STATE MANAGEMENT
+//____________________________________________________________
+
 function clearCustomTip() {
     customTip.value = ''
 }
+
 function removeActiveFromButtons() {
     tipField.forEach(button => {
         button.classList.remove('bill-card__tip-button--active');
     });
 }
 
+//____________________________________________________________
 // RESULT MANAGEMENT
+//____________________________________________________________
+
 function setResult() {
     if (splitBill.valuesArePresent()) {
         tipPerPerson.textContent = splitBill.calculateTip();
@@ -209,3 +238,4 @@ function restoreTodefault() {
     // Disable reset button
     resetButton.disabled = true;
 }
+
