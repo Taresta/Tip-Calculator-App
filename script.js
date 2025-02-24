@@ -67,30 +67,30 @@ function dataIsValid(key, value, validations) {
 // SPLIT BILL CLASS
 class SplitBill {
     constructor(bill, tip, people) {
-        this.bill = bill;
-        this.tip = tip;
-        this.people = people;
+        this._bill = bill;
+        this._tip = tip;
+        this._people = people;
     }
     
-    setBill(bill) { this.bill = bill; }
-    setPeople(people) { this.people = people; }
-    setTip(tip) { this.tip = tip; }
+    setBill(bill) { this._bill = bill; }
+    setPeople(people) { this._people = people; }
+    setTip(tip) { this._tip = tip; }
     
-    getBill() { return this.bill; }
-    getPeople() { return this.people; }
-    getTip() { return this.tip; }
+    getBill() { return this._bill; }
+    getPeople() { return this._people; }
+    getTip() { return this._tip; }
     
     valuesArePresent() {
-        return this.bill > 0 && this.people > 0 && this.tip >= 0; // Tip can be zero
+        return this._bill > 0 && this._people > 0 && this._tip >= 0; // Tip can be zero
     }
     
     calculateTip() {
-        let tipInNumber = (this.bill * this.tip) / 100;
-        return (tipInNumber / this.people).toFixed(2);
+        let tipInNumber = (this._bill * this._tip) / 100;
+        return (tipInNumber / this._people).toFixed(2);
     }
     
     calculateTotal() {
-        return (this.bill / this.people).toFixed(2);
+        return (this._bill / this._people).toFixed(2);
     }
 }
 
